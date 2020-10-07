@@ -3,6 +3,8 @@ import {
   StyleSheet,
   View,
   FlatList,
+  Button,
+  Dimensions
 } from "react-native";
 
 import GoalItem from "./components/GoalItem";
@@ -10,6 +12,7 @@ import GoalInput from "./components/GoalInput"
 
 export default function App() {
   const [courseGoals, setCourseGoals] = useState([]);
+  const [isVisibleModal, setVisibleModal] = useState(false)
 
   const addGoalHandler = (goalTitle) => {
     // Esta maneira pode haver erro
@@ -22,6 +25,8 @@ export default function App() {
         value: goalTitle,
       },
     ]);
+
+    setVisibleModal(false);
   };
 
   const removeGoalHandler = (goalId) => {
@@ -30,9 +35,21 @@ export default function App() {
     )
   }
 
+  const cancelAddGoalHandler = () => {
+    setVisibleModal(false)
+  }
+
   return (
     <View style={styles.container}>
-      <GoalInput onAddGoal={addGoalHandler} />
+      <Button
+        title='Add new goal'
+        onPress={() => setVisibleModal(true)}
+      />
+      <GoalInput
+        visible={isVisibleModal}
+        onAddGoal={addGoalHandler}
+        onCancel={cancelAddGoalHandler}
+      />
       <FlatList
         keyExtractor={(item, index) => item.id} // Caso queira usar um nome diferente de key
         data={courseGoals}
@@ -41,7 +58,8 @@ export default function App() {
             <GoalItem 
               onDelete={removeGoalHandler.bind(this, item.id)}
               title={item.value}
-            />)
+            />
+          )
         }
       />
     </View>
@@ -51,6 +69,5 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     padding: 50,
-    backgroundColor: "#88335844",
   },
 });
